@@ -87,9 +87,23 @@ protected:
     EEPROM.commit();
   }
 
+#elif defined(ESP32)
+
+  static void read_block(void *__dst, const void *__src, size_t __n) {
+    uint8_t* data = (uint8_t*)__dst;
+    int addr = (int)__src;
+    while(__n--) *data++ = EEPROM.read(addr++);
+  }
+  static void update_block(const void *__src, void *__dst, size_t __n) {
+    const uint8_t* data = (const uint8_t*)__src;
+    int addr = (int)__dst;
+    while(__n--) EEPROM.write(addr++, *data++);
+    EEPROM.commit();
+  }
+
 #else
 
-#error "******     EEvar library does not yet support this platform. Supported platforms: AVR, ESP8266     ******"
+#error "******     EEvar library does not yet support this platform. Supported platforms: AVR, ESP8266, ESP32     ******"
 
 #endif
 
