@@ -25,6 +25,10 @@ public:
     static bool inited = false;
     if(!inited) EEPROM.begin(512);
     inited = true;
+#elif defined(ESP32)
+    static bool inited = false;
+    if(!inited) EEPROM.begin(512, false); // Initialize EEPROM with size 512 bytes, no need to format
+    inited = true;
 #endif
     unsigned int &cur = addrCnt();
     const unsigned int start = cur;
