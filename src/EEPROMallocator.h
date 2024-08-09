@@ -21,13 +21,9 @@ class EEPROMallocator {
 
 public:
   static void* alloc(const unsigned int sz) {
-#if defined(ESP8266)
+#if defined(ESP8266) || defined(ESP32) 
     static bool inited = false;
     if(!inited) EEPROM.begin(512);
-    inited = true;
-#elif defined(ESP32)
-    static bool inited = false;
-    if(!inited) EEPROM.begin(512, false); // Initialize EEPROM with size 512 bytes, no need to format
     inited = true;
 #endif
     unsigned int &cur = addrCnt();
