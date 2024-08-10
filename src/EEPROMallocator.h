@@ -73,12 +73,26 @@ protected:
   static void read_block(void *__dst, const void *__src, size_t __n) { eeprom_read_block(__dst, __src, __n); }
   static void update_block(const void *__src, void *__dst, size_t __n) { eeprom_write_block(__src, __dst, __n); }
 
-#elif defined(ESP8266) || defined(ARDUINO_ARCH_ESP8266) || defined(ESP32)
+#elif defined(ESP8266) || defined(ARDUINO_ARCH_ESP8266)
 
   static void read_block(void *__dst, const void *__src, size_t __n) {
     uint8_t* data = (uint8_t*)__dst;
     int addr = (int)__src;
     while(__n--) *data++ = EEPROM[addr++];
+  }
+  static void update_block(const void *__src, void *__dst, size_t __n) {
+    const uint8_t* data = (const uint8_t*)__src;
+    int addr = (int)__dst;
+    while(__n--) EEPROM.write(addr++, *data++);
+    EEPROM.commit();
+  }
+
+#elif defined(ESP32)
+
+  static void read_block(void *__dst, const void *__src, size_t __n) {
+    uint8_t* data = (uint8_t*)__dst;
+    int addr = (int)__src;
+    while(__n--) *data++ = EEPROM.read(addr++);
   }
   static void update_block(const void *__src, void *__dst, size_t __n) {
     const uint8_t* data = (const uint8_t*)__src;
